@@ -1,5 +1,9 @@
 # How to run
-Use docker-compose to run
+Use docker-compose to run, the entrypoint is mapped to npm run build:run, which installs dependencies, generates prisma client, migrates database and runs the app
+
+## Original bug issue
+
+https://github.com/prisma/prisma/issues/6337
 
 The init script (packages.json - scripts) includes:
 * npm ci
