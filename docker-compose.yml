@@ -1,0 +1,41 @@
+version: '3.5'
+networks:
+  primary:
+
+volumes:
+  db_data:
+
+services:
+  db_pg:
+    networks:
+      - primary
+    image: postgres:13.2-alpine
+    container_name: prismabug_db
+    environment:
+      POSTGRES_PASSWORD: prismabugpassword
+      POSTGRES_USER: prismabug
+      POSTGRES_DB: prismabug
+      TZ: 'Europe/Prague'
+      PGTZ: 'Europe/Prague'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    networks:
+      - primary
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    container_name: prismabug_app
+    environment:
+      PRISMA_DATABASE_URL: "postgresql://prismabug:prismabugpassword@db_pg:5432/prismabug?schema=public"
+      NODE_ENV: "development"
+    volumes:
+      - ./:/home/app
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    #entrypoint: [ "tail", "-f"]
+    entrypoint: [ "npm", "run", "build:run" ]
